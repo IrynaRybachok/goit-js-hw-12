@@ -1,5 +1,4 @@
 
-
 import searchImegesByQuery from "./js/pixabay-apy"
 import renderFunction from "./js/render-functions"
 // Описаний у документації
