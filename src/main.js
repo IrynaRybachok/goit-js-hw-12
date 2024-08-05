@@ -73,7 +73,8 @@ async function heandlyClickBtnSearch(event){
     } catch(err){
         imageContainer.innerHTML = '';
         spiner.hide();
-        if (err.name === 'TypeError' && err.message === 'Failed to fetch') {
+        btnService.hide()
+        if (err.name === 'TypeError' && err.message.includes("Failed to fetch")) {
             iziToast.show({
                 title: 'Error',
                 titleColor: '#FAFAFB',
@@ -88,6 +89,8 @@ async function heandlyClickBtnSearch(event){
                 backgroundColor: '#EF4040',
             });
         } else {
+            spiner.hide();
+            btnService.hide()
             iziToast.show({
                 title: 'Error',
                 titleColor: '#FAFAFB',
@@ -109,7 +112,7 @@ async function heandlyClickBtnSearch(event){
 }
 
 async function handleLoadMore(){
-    btnService.disable();
+    btnService.hide();
     spiner.show()
     params.page += 1;
 
@@ -117,7 +120,9 @@ async function handleLoadMore(){
         const { hits } = await searchImegesByQuery(params);
         renderImg( hits );
         myScroll();
+        btnService.show();
     } catch(err){
+        
         spiner.hide()
         iziToast.show({
             title: 'Error',
