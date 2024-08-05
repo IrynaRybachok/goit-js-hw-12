@@ -9,7 +9,7 @@ function searchImegesByQuery({q = "query", page = 1, per_page = 15} = {
     per_page: 15,
 }){
 
-    return axios.get("/api/" , {
+    return axios.get("/api/", {
         params: {
             key: "45131353-6378824e083214db07911a1d4",
             q,

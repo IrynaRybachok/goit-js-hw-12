@@ -1,17 +1,20 @@
 
-import ButtonService from "./js/load-more-btn";
-import searchImegesByQuery from "./js/pixabay-apy"
-import renderImg from "./js/render-functions"
 // Описаний у документації
 import iziToast from "izitoast";
 // Додатковий імпорт стилів
 import "izitoast/dist/css/iziToast.min.css";
 
+import searchImegesByQuery from "./js/pixabay-apy";
+import renderImg from "./js/render-functions";
+import ButtonService from "./js/load-more-btn";
+import SpinerServise from "./js/spiner";
+
 const form = document.querySelector('.search-img-form');
 const loader = document.querySelector('.loader');
 const imageContainer = document.querySelector('.img-container-list');
 const btnLoadMore = document.querySelector('.load-more');
-const btnService = new ButtonService(btnLoadMore);
+const btnService = new ButtonService(btnLoadMore, "is-hidden");
+const spiner = new SpinerServise( loader );
 
 const params = {
     page: 1,
@@ -20,15 +23,13 @@ const params = {
     maxPage: 0,
 };
 
-
-
 form.addEventListener('submit', heandlyClickBtnSearch);
 btnService.hide();
-loader.style.display = 'none';
+spiner.hide();
 
 async function heandlyClickBtnSearch(event){
     event.preventDefault();
-    loader.style.display = 'block';
+    spiner.show();
     imageContainer.innerHTML = '';
 
     params.q = event.currentTarget.elements.name.value.trim().toLowerCase();
@@ -48,7 +49,7 @@ async function heandlyClickBtnSearch(event){
             messageLineHeight: ' 24px',
             backgroundColor: '#FFA000',
         });
-        loader.style.display = 'none';
+        spiner.hide();
         form.reset();
         return;
     }
@@ -71,7 +72,7 @@ async function heandlyClickBtnSearch(event){
         }
     } catch(err){
         imageContainer.innerHTML = '';
-        loader.style.display = 'none';
+        spiner.hide();
         if (err.name === 'TypeError' && err.message === 'Failed to fetch') {
             iziToast.show({
                 title: 'Error',
@@ -109,12 +110,15 @@ async function heandlyClickBtnSearch(event){
 
 async function handleLoadMore(){
     btnService.disable();
+    spiner.show()
     params.page += 1;
 
     try{
         const { hits } = await searchImegesByQuery(params);
         renderImg( hits );
+        myScroll();
     } catch(err){
+        spiner.hide()
         iziToast.show({
             title: 'Error',
             titleColor: '#FAFAFB',
@@ -132,8 +136,26 @@ async function handleLoadMore(){
         if(params.page === params.maxPage){
             btnService.hide();
             btnLoadMore.removeEventListener("click", handleLoadMore);
+            iziToast.show({
+                position: 'topRight',
+                maxWidth: '432px',
+                message: "We're sorry, but you've reached the end of search results.",
+                messageColor: '#FAFAFB',
+                messageSize: '16px',
+                messageLineHeight: ' 24px',
+                backgroundColor: '#09F',
+            });
         } else{
             btnService.enable();
         }
     }
+}
+
+function myScroll(){
+    const container = document.querySelector(".img-container-item");
+    const containerParam = container.getBoundingClientRect().height;
+    window.scrollBy({
+        top: containerParam * 2,
+        behavior: "smooth",
+    });
 }
