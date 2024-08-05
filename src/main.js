@@ -23,7 +23,7 @@ const params = {
     maxPage: 0,
 };
 
-form.addEventListener('submit', heandlyClickBtnSearch);
+form.addEventListener("submit", heandlyClickBtnSearch);
 btnService.hide();
 spiner.hide();
 
