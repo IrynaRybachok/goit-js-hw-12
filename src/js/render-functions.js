@@ -7,15 +7,16 @@ import SimpleLightbox from "simplelightbox";
 // Додатковий імпорт стилів
 import "simplelightbox/dist/simple-lightbox.min.css";
 
-export default {renderImg, onFetchError}
+export default renderImg;
 const imageContainer = document.querySelector(".img-container-list");
 const loader = document.querySelector('.loader');
+
 
 
 function renderImg(images){
     loader.style.display = 'none';
 
-    if(!images.hits.length){
+    if(!images.length){
         iziToast.show({
             title: 'Error',
             titleColor: '#FAFAFB',
@@ -32,7 +33,7 @@ function renderImg(images){
         return;
     }
     
-    imageContainer.innerHTML = createMarkup(images.hits);
+    imageContainer.insertAdjacentHTML("beforeend", createMarkup(images));
 
     const refreshPage = new SimpleLightbox('.wrap-img-item a', { 
         captions: true,
@@ -70,39 +71,4 @@ function createMarkup(arr){
         </div>
     </li>`)
     .join("");
-}
-
-function onFetchError(err){
-    imageContainer.innerHTML = '';
-    loader.style.display = 'none';
-    console.log(err)
-    if (err.name === 'TypeError' && err.message === 'Failed to fetch') {
-        iziToast.show({
-            title: 'Error',
-            titleColor: '#FAFAFB',
-            titleSize: '16px',
-            titleLineHeight: '24px',
-            position: 'topRight',
-            maxWidth: '432px',
-            message: 'No internet connection',
-            messageColor: '#FAFAFB',
-            messageSize: '16px',
-            messageLineHeight: ' 24px',
-            backgroundColor: '#EF4040',
-        });
-    } else {
-        iziToast.show({
-            title: 'Error',
-            titleColor: '#FAFAFB',
-            titleSize: '16px',
-            titleLineHeight: '24px',
-            position: 'topRight',
-            maxWidth: '432px',
-            message: `An error occurred: ${err.message}`,
-            messageColor: '#FAFAFB',
-            messageSize: '16px',
-            messageLineHeight: ' 24px',
-            backgroundColor: '#EF4040',
-        });
-    }
 }
